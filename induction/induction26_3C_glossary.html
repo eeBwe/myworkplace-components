@@ -2,8 +2,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title></title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link
+    rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+  />
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
@@ -1666,9 +1672,12 @@
 <!-- App + Namespaced style injection -->
 <script>
   (function () {
-    // ----- 1) Inject namespaced styles into <head> (Moodle-safe) -----
-    var style = document.createElement("style");
-    style.innerHTML = `
+    // ----- 1) Inject styles (idempotent, isolated) -----
+    if (!document.getElementById("glossary-styles")) {
+      var style = document.createElement("style");
+      style.id = "glossary-styles";
+      style.innerHTML = `
+
     /* Brand color variables (scoped via classes, not :root, to avoid LMS overrides) */
     .gloss-style-container { background:#f8fafc; }
     .gloss-style-title { font-weight:700; letter-spacing:.3px; }
@@ -1726,18 +1735,20 @@
     /* Labels (minor typography) */
     .gloss-style-label { font-weight:600; }
   `;
-    document.head.appendChild(style);
+      document.head.appendChild(style);
+    }
 
+    // ----- 2) Find root (DO NOT put this inside the style guard) -----
+    var root =
+      document.querySelector("#bw-glossary .gloss-style-container") ||
+      document.querySelector(".gloss-style-container");
 
-var root =
-  document.querySelector('#bw-glossary .gloss-style-container') ||
-  document.querySelector('.gloss-style-container');
+    if (!root) {
+      console.warn("Glossary root not found");
+      return;
+    }
 
-if (!root) {
-  console.warn('Glossary root not found');
-  return;
-}
-
+    // ----- 3) Everything below ALWAYS runs once root exists -----
     var listEl = root.querySelector("#glossaryList");
     var alphaNavEl = root.querySelector(".gloss-style-alpha-nav");
     var searchInput = root.querySelector("#searchInput");
@@ -2027,7 +2038,7 @@ if (!root) {
       silverAwarded = false;
       goldAwarded = false;
       applyFilters();
-      document.querySelector(".gloss-style-scroll").scrollTop = 0;
+      root.querySelector(".gloss-style-scroll").scrollTop = 0;
     });
 
     // ----- 11) Init -----
