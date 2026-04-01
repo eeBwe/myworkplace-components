@@ -1866,9 +1866,17 @@
         btn.className = "btn btn-sm btn-outline-primary";
         btn.textContent = "View";
         btn.setAttribute("aria-expanded", "false");
+
         btn.addEventListener("click", function () {
-          openOnlyThis(card, btn);
+          const expanded = btn.getAttribute("aria-expanded") === "true";
+
+          if (expanded) {
+            closeCard(card, btn);
+          } else {
+            openOnlyThis(card, btn);
+          }
         });
+
         right.appendChild(btn);
 
         titleRow.appendChild(left);
@@ -1886,37 +1894,44 @@
     }
 
     // ----- 5) Single-open + focus management -----
+
     function openOnlyThis(card, btn) {
       closeAll();
-      var def = card.querySelector(".gloss-style-definition");
-      $(def).collapse("show"); // Bootstrap 4 collapse
+
+      const def = card.querySelector(".gloss-style-definition");
+      def.style.display = "block";
+      def.classList.add("show");
+
       btn.textContent = "Hide";
       btn.setAttribute("aria-expanded", "true");
-
-      // Accessibility: keep keyboard focus on the control that opened it
       btn.focus();
 
-      // Subtle highlight
-      card.classList.add("border", "border-2", "border-success");
-      setTimeout(function () {
-        card.classList.remove("border", "border-2", "border-success");
-      }, 1200);
-
-      // awards
       incrementOpened();
     }
 
     function closeAll() {
       var defs = listEl.querySelectorAll(".gloss-style-definition.show");
       defs.forEach(function (el) {
-        $(el).collapse("hide");
+        el.classList.remove("show");
+        el.style.display = "none";
       });
+
       listEl
         .querySelectorAll('.btn[aria-expanded="true"]')
         .forEach(function (b) {
           b.textContent = "View";
           b.setAttribute("aria-expanded", "false");
         });
+    }
+
+    function closeCard(card, btn) {
+      const def = card.querySelector(".gloss-style-definition");
+
+      def.classList.remove("show");
+      def.style.display = "none";
+
+      btn.textContent = "View";
+      btn.setAttribute("aria-expanded", "false");
     }
 
     function escapeHtml(raw) {
