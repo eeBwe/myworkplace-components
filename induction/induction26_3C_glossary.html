@@ -1715,10 +1715,9 @@
     .gloss-style-label { font-weight:600; }
   `;
     document.head.appendChild(style);
-    var root = document.querySelector('#bw-glossary .gloss-style-container');
-    if (!root) return; // safety guard
+
     // ----- 2) App state -----
-    var listEl = root.querySelector("glossaryList");
+    var listEl = document.getElementById("glossaryList");
     var alphaNavEl = document.querySelector(".gloss-style-alpha-nav");
     var searchInput = document.getElementById("searchInput");
     var catSelect = document.getElementById("categorySelect");
@@ -1744,7 +1743,7 @@
       Learning: "gloss-style-border-blue",
       Governance: "gloss-style-border-blue",
       Environment: "gloss-style-border-green",
-      StudentServices: "gloss-style-border-orange",
+      "Student Services": "gloss-style-border-orange",
       Facilities: "gloss-style-border-purple",
     };
 
@@ -2014,5 +2013,3 @@
     render(currentData);
   })();
 </script>
-
-<!-- END DEV PREVIEW WRAPPER
